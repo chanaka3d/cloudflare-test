@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16' # project's required Node.js version
+          node-version: "18" # project's required Node.js version
 
       # Install dependencies
       - name: Install Dependencies
@@ -42,3 +42,15 @@ jobs:
           # workingDirectory: my-site
           # Optional: Change the Wrangler version
           # wranglerVersion: '3'
+        # Set the deployment URL as an environment variable
+      - name: Set Deployment URL
+        run: echo "DEPLOYMENT_URL=${{ steps.deploy.outputs.url }}" >> $GITHUB_ENV
+      # ... [Any other steps before your tests] ...
+
+      - name: Run Playwright Tests
+        run: |
+          npm install # or your test setup steps
+          npx playwright test --base-url $DEPLOYMENT_URL
+
+        env:
+          DEPLOYMENT_URL: ${{ env.DEPLOYMENT_URL }}
