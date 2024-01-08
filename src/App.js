@@ -23,7 +23,6 @@ function App() {
           Learn React
         </a>
         <h1>{name}</h1>
-
         <input type="text" placeholder="Enter your name" />
         <button onClick={handleClick}>Set Name</button>
       </header>
