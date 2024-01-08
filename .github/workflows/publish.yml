@@ -1,0 +1,44 @@
+on: [push]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Set up your project's environment (e.g., Node.js, Python, etc.)
+      # This example is for a Node.js project
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Replace with your project's required Node.js version
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install # Or use the appropriate command for your project
+
+      # Build your project
+      - name: Build Project
+        run: npm run build # Replace with your project's build command
+
+      # Publish to Cloudflare Pages
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 6f1cb80b29274c4210a5069acf21aff6
+          projectName: cloudflare-test
+          directory: ./build # Ensure this points to your project's build output directory
+          # Optional: Enable this if you want to have GitHub Deployments triggered
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: Switch what branch you are publishing to.
+          branch: main
+          # Optional: Change the working directory
+          # workingDirectory: my-site
+          # Optional: Change the Wrangler version
+          # wranglerVersion: '3'
