@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14' # Replace with your project's required Node.js version
+          node-version: '16' # project's required Node.js version
 
       # Install dependencies
       - name: Install Dependencies
@@ -24,7 +24,7 @@ jobs:
 
       # Build your project
       - name: Build Project
-        run: npm run build # Replace with your project's build command
+        run: npm run build # project's build command
 
       # Publish to Cloudflare Pages
       - name: Publish to Cloudflare Pages
