@@ -1,57 +1,43 @@
 on: [push]
 
 jobs:
-  publish:
+  local-server-tests:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: write
-    name: Publish to Cloudflare Pages
+    name: Run tests against local server
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Set up your project's environment (e.g., Node.js, Python, etc.)
-      # This example is for a Node.js project
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18" # project's required Node.js version
+          node-version: "18"
 
-      # Install dependencies
       - name: Install Dependencies
-        run: npm install # Or use the appropriate command for your project
+        run: npm install
 
-      # Build your project
       - name: Build Project
-        run: npm run build # project's build command
+        run: npm run build
 
-      # Publish to Cloudflare Pages
-      - name: Publish to Cloudflare Pages
-        id: deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 6f1cb80b29274c4210a5069acf21aff6
-          projectName: cloudflare-test
-          directory: ./build # Ensure this points to your project's build output directory
-          # Optional: Enable this if you want to have GitHub Deployments triggered
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Optional: Switch what branch you are publishing to.
-          branch: main
-          # Optional: Change the working directory
-          # workingDirectory: my-site
-          # Optional: Change the Wrangler version
-          # wranglerVersion: '3'
-        # Set the deployment URL as an environment variable
-      - name: Set Deployment URL
-        run: echo "DEPLOYMENT_URL=${{ steps.deploy.outputs.url }}" >> $GITHUB_ENV
+      - name: Start Local Server
+        run: npm start &
+        shell: bash
+
+      # Wait for the server to start. Adjust the sleep time as needed.
+      - name: Wait for Server to be Ready
+        run: sleep 10
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      # Here we run the Playwright tests against the local server
       - name: Run Playwright tests
-        run: URL=$DEPLOYMENT_URL npx playwright test
+        run: URL=http://localhost:8000 npx playwright test
         env:
-            DEPLOYMENT_URL: ${{ env.DEPLOYMENT_URL }}
+            DEPLOYMENT_URL: http://localhost:8000
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
