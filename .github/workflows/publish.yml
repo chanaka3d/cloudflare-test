@@ -34,9 +34,9 @@ jobs:
 
       # Here we run the Playwright tests against the local server
       - name: Run Playwright tests
-        run: URL=http://localhost:8000 npx playwright test
+        run: URL=http://localhost:3000 npx playwright test
         env:
-            DEPLOYMENT_URL: http://localhost:8000
+            DEPLOYMENT_URL: http://localhost:3000
 
       - uses: actions/upload-artifact@v3
         if: always()
